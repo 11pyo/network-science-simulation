@@ -54,7 +54,7 @@ def render_political_view(network, simulation_results=None):
         height=450,
         margin=dict(l=20, r=20, t=20, b=20),
     )
-    st.plotly_chart(fig_heatmap, use_container_width=True)
+    st.plotly_chart(fig_heatmap, width="stretch")
 
     if simulation_results is not None:
         max_step = ShockSimulator.get_max_step(simulation_results)
@@ -90,7 +90,7 @@ def render_political_view(network, simulation_results=None):
             height=400,
             margin=dict(l=20, r=20, t=20, b=40),
         )
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, width="stretch")
 
         # Radar chart: core system influence reach
         st.subheader("Core System Influence Radar")
@@ -121,7 +121,7 @@ def render_political_view(network, simulation_results=None):
             height=450,
             margin=dict(l=40, r=40, t=40, b=40),
         )
-        st.plotly_chart(fig_radar, use_container_width=True)
+        st.plotly_chart(fig_radar, width="stretch")
 
     else:
         st.info("Run a simulation to see governance & impact analysis.")

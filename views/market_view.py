@@ -53,7 +53,7 @@ def render_market_view(network, simulation_results=None):
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
             yaxis=dict(range=[-1.1, 1.1]),
         )
-        st.plotly_chart(fig_ts, use_container_width=True)
+        st.plotly_chart(fig_ts, width="stretch")
 
         # --- Cumulative Impact Bar ---
         st.subheader("Cumulative Operations Impact")
@@ -83,7 +83,7 @@ def render_market_view(network, simulation_results=None):
             margin=dict(l=20, r=20, t=20, b=40),
             yaxis=dict(range=[-1.1, 1.1]),
         )
-        st.plotly_chart(fig_cum, use_container_width=True)
+        st.plotly_chart(fig_cum, width="stretch")
 
         # --- Core Ops Correlation Subset ---
         st.subheader("Core Operations Correlations")
@@ -113,7 +113,7 @@ def render_market_view(network, simulation_results=None):
             height=300,
             margin=dict(l=20, r=20, t=20, b=20),
         )
-        st.plotly_chart(fig_hm, use_container_width=True)
+        st.plotly_chart(fig_hm, width="stretch")
 
         # --- Summary Metrics ---
         st.subheader("Operations Summary")
