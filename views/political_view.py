@@ -1,32 +1,33 @@
 """
-Political/diplomatic impact visualization.
+Governance & Impact analysis visualization.
 """
 
 import streamlit as st
 import plotly.graph_objects as go
-import plotly.express as px
 import pandas as pd
-import numpy as np
 
 from config.constants import NODE_LABELS_KO, NODE_COLORS, NODE_IDS, NODE_GROUPS
 from models.simulation import ShockSimulator
 from utils.helpers import format_percentage
 
 
-def render_political_view(network, simulation_results=None):
+def render_political_view(network, simulation_results=None, preset=None):
     """Render governance & impact analysis view."""
 
-    st.header("Governance & Impact Analysis")
+    # Use preset data if provided, else fall back to SAP defaults
+    node_labels  = preset["node_labels"]  if preset else NODE_LABELS_KO
+    node_colors  = preset["node_colors"]  if preset else NODE_COLORS
+    # [SECURE] Radar nodes come from preset whitelist only - no user injection (Category 1)
+    radar_nodes  = preset["radar_nodes"]  if preset else ["sap_basis", "db_hana"]
 
-    governance_nodes = NODE_GROUPS["governance"]
+    st.header("Governance & Impact Analysis")
 
     # --- Correlation Heatmap ---
     st.subheader("System Correlation Matrix")
 
-    adj = network.get_adjacency_dict()
+    adj       = network.get_adjacency_dict()
     all_nodes = network.get_nodes()
 
-    # Build matrix for all nodes with political focus
     matrix_data = []
     for n in all_nodes:
         row = []
@@ -38,7 +39,7 @@ def render_political_view(network, simulation_results=None):
                 row.append(w)
         matrix_data.append(row)
 
-    labels = [NODE_LABELS_KO.get(n, n) for n in all_nodes]
+    labels = [node_labels.get(n, n) for n in all_nodes]
 
     fig_heatmap = go.Figure(data=go.Heatmap(
         z=matrix_data,
@@ -57,17 +58,16 @@ def render_political_view(network, simulation_results=None):
     st.plotly_chart(fig_heatmap, width="stretch")
 
     if simulation_results is not None:
-        max_step = ShockSimulator.get_max_step(simulation_results)
+        ShockSimulator.get_max_step(simulation_results)
         final_impacts = ShockSimulator.get_final_impacts(simulation_results)
 
         st.subheader("Shock Impact by Node")
 
-        # Bar chart of final impacts
         impact_df = pd.DataFrame([
             {
-                "node": NODE_LABELS_KO.get(n, n),
+                "node":   node_labels.get(n, n),
                 "impact": final_impacts.get(n, 0.0),
-                "color": NODE_COLORS.get(n, "#888"),
+                "color":  node_colors.get(n, "#888"),
             }
             for n in all_nodes
         ])
@@ -92,27 +92,29 @@ def render_political_view(network, simulation_results=None):
         )
         st.plotly_chart(fig_bar, width="stretch")
 
-        # Radar chart: core system influence reach
+        # Radar chart: key node influence reach
         st.subheader("Core System Influence Radar")
 
-        categories = [NODE_LABELS_KO.get(n, n) for n in all_nodes]
+        categories = [node_labels.get(n, n) for n in all_nodes]
 
         fig_radar = go.Figure()
 
-        for pol_node in ["sap_basis", "db_hana"]:
-            # Get weight connections from this political node to all others
+        # [SECURE] radar_nodes sourced from preset whitelist - no arbitrary node IDs (Category 1)
+        for rn in radar_nodes:
+            if rn not in all_nodes:
+                continue  # [SECURE] Null check - skip invalid node (Category 5)
             vals = []
             for n in all_nodes:
-                w = adj.get(pol_node, {}).get(n, 0.0)
-                if n == pol_node:
+                w = adj.get(rn, {}).get(n, 0.0)
+                if n == rn:
                     w = 1.0
                 vals.append(abs(w))
 
             fig_radar.add_trace(go.Scatterpolar(
-                r=vals + [vals[0]],  # close the polygon
+                r=vals + [vals[0]],
                 theta=categories + [categories[0]],
                 fill="toself",
-                name=NODE_LABELS_KO.get(pol_node, pol_node),
+                name=node_labels.get(rn, rn),
                 opacity=0.6,
             ))
 
@@ -131,6 +133,9 @@ def render_political_view(network, simulation_results=None):
 # Security Checklist
 # Applied:
 #   - Null check: simulation_results checked before use (Category 5)
+#   - Null check: preset checked before use with fallback (Category 5)
+#   - Null check: radar node membership validated against all_nodes (Category 5)
+#   - Whitelist: radar_nodes sourced from preset registry (Category 1)
 #   - Encapsulation: adj from get_adjacency_dict returns copy (Category 6)
 # Not Applied:
 #   - [WARN] SQL Injection: Not applicable - no database
