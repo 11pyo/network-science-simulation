@@ -15,11 +15,12 @@ from config.constants import (
     MAX_SIMULATION_STEPS,
 )
 from config.macro_preset import VALID_MACRO_NODE_IDS
+from config.physics_preset import VALID_PHYSICS_NODE_IDS
 
 logger = logging.getLogger(__name__)
 
 # [SECURE] Combined whitelist of all valid node IDs across all presets (Category 1)
-_ALL_VALID_NODE_IDS = VALID_NODE_IDS | VALID_MACRO_NODE_IDS
+_ALL_VALID_NODE_IDS = VALID_NODE_IDS | VALID_MACRO_NODE_IDS | VALID_PHYSICS_NODE_IDS
 
 
 # [SECURE] Whitelist validation - prevents arbitrary node ID injection (Category 1)

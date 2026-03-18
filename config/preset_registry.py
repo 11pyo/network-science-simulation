@@ -24,6 +24,11 @@ from config.macro_preset import (
     MACRO_DEFAULT_WEIGHTS, MACRO_NODE_POSITIONS, MACRO_NODE_GROUPS,
     MACRO_RADAR_NODES, MACRO_DAMPING_DEFAULT,
 )
+from config.physics_preset import (
+    PHYSICS_NODES, PHYSICS_NODE_IDS, PHYSICS_NODE_LABELS, PHYSICS_NODE_COLORS,
+    PHYSICS_DEFAULT_WEIGHTS, PHYSICS_NODE_POSITIONS, PHYSICS_NODE_GROUPS,
+    PHYSICS_RADAR_NODES, PHYSICS_DAMPING_DEFAULT,
+)
 
 PRESETS = {
     "SAP Impact": {
@@ -49,6 +54,18 @@ PRESETS = {
         "node_groups":     MACRO_NODE_GROUPS,
         "radar_nodes":     MACRO_RADAR_NODES,
         "damping_default": MACRO_DAMPING_DEFAULT,
+    },
+    "Complex Physics": {
+        "title":           "Complex Systems Physics Simulation",
+        "nodes":           PHYSICS_NODES,
+        "node_ids":        PHYSICS_NODE_IDS,
+        "node_labels":     PHYSICS_NODE_LABELS,
+        "node_colors":     PHYSICS_NODE_COLORS,
+        "default_weights": PHYSICS_DEFAULT_WEIGHTS,
+        "node_positions":  PHYSICS_NODE_POSITIONS,
+        "node_groups":     PHYSICS_NODE_GROUPS,
+        "radar_nodes":     PHYSICS_RADAR_NODES,
+        "damping_default": PHYSICS_DAMPING_DEFAULT,
     },
 }
 

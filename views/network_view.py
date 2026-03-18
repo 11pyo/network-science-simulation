@@ -28,6 +28,14 @@ def render_network_view(network, simulation_results=None, preset=None):
         options=["degree", "betweenness", "eigenvector"],
         index=0,
         key="centrality_method",
+        help=(
+            "**Degree** — 직접 연결된 노드 수 기반. "
+            "연결이 많을수록 중심성이 높음.\n\n"
+            "**Betweenness** — 최단 경로 위에 놓이는 빈도 기반. "
+            "높으면 '중개자' 역할 (장애 시 전파 병목).\n\n"
+            "**Eigenvector** — 영향력 있는 노드와 연결된 정도 기반. "
+            "높으면 핵심 허브와 밀접하게 연결됨."
+        ),
     )
 
     centrality    = network.get_centrality(centrality_method)

@@ -192,6 +192,101 @@ def _render_macro_help():
 """)
 
 
+def _render_physics_help():
+    """Complex Systems Physics preset help content."""
+    st.markdown("""
+## Complex Systems Physics — Configuration Guide
+
+### Target Node (대상 노드)
+
+충격을 최초 발생시킬 복잡계 물리학 영역을 선택합니다.
+
+| Node | Role | Typical Shock Scenario |
+|------|------|----------------------|
+| **Power Grid** | 전력망 (송배전, 발전) | 대규모 정전, 캐스케이딩 장애, 피크 과부하 |
+| **Epidemic** | 전염병 확산 네트워크 | 팬데믹 발생, 변이 출현, 집단 면역 붕괴 |
+| **Climate** | 기후 시스템 (대기·해양) | 극한 기상, 티핑 포인트 초과, 엘니뇨 |
+| **Seismology** | 지진·지질 역학 | 대지진 발생, 화산 분출, 지각 변동 |
+| **Ecosystem** | 생태계 (생물 다양성) | 종 멸종, 서식지 파괴, 먹이사슬 붕괴 |
+
+---
+
+### Shock Intensity (충격 강도) — 0.0 ~ 1.0
+
+| Value | Meaning | Physics Example |
+|-------|---------|----------------|
+| **0.1 ~ 0.3** | Minor | 소규모 정전, 국지적 이상기후 |
+| **0.4 ~ 0.6** | Moderate | 지역 전력망 캐스케이딩, 전염병 유행 |
+| **0.7 ~ 0.9** | Major | 대륙급 정전, 기후 티핑 포인트 접근 |
+| **1.0** | Catastrophic | M9.0 대지진, 글로벌 팬데믹 |
+
+---
+
+### Simulation Steps (시뮬레이션 단계) — 1 ~ 20
+
+| Value | Meaning | Physics Context |
+|-------|---------|----------------|
+| **3 ~ 5** | Short-term | 캐스케이딩 초기 전파 (수 시간~수 일) |
+| **8 ~ 10** | Mid-term | 시스템 간 교차 영향 **(권장)** |
+| **15 ~ 20** | Long-term | 레짐 시프트, 새 평형 도달 관찰 |
+
+---
+
+### Damping Factor (감쇠 계수) — 0.1 ~ 0.9
+
+**S(t+1) = Damping x W x S(t)**
+
+| Value | Meaning | Physics Context |
+|-------|---------|----------------|
+| **0.1 ~ 0.3** | Fast decay | 안전장치 작동, 회로 차단기 동작 |
+| **0.4 ~ 0.6** | Realistic | **일반 복잡계 전파 (권장)** |
+| **0.7 ~ 0.9** | Slow decay | Self-Organized Criticality (SOC) 상태 |
+
+> **SOC (자기조직 임계성)**: Bak, Tang & Wiesenfeld (1987). 모래더미 모델처럼 시스템이 스스로 임계 상태를 유지하며 멱법칙(power-law) 분포의 연쇄 반응을 일으킵니다.
+
+---
+
+### Default Correlations — Academic Sources
+
+| Pair | r | Source |
+|------|---|--------|
+| Climate - Ecosystem | 0.82 | Scheffer et al. (2001) — *Nature*; Strogatz (2001) |
+| Power Grid - Climate | 0.72 | Dobson et al. (2007) — *CHAOS*; Panteli & Mancarella (2015) |
+| Epidemic - Climate | 0.68 | Mordecai et al. (2019); Lenton et al. (2008) — *PNAS* |
+| Epidemic - Ecosystem | 0.62 | Keesing et al. (2010) — *Nature*; May (1972) |
+| Power Grid - Seismology | 0.55 | Romero et al. (2015); Barabasi & Albert (1999) |
+| Power Grid - Ecosystem | 0.45 | Barnosky et al. (2012) — *Nature* |
+| Power Grid - Epidemic | 0.38 | Buldyrev et al. (2010) — *Nature* |
+| Ecosystem - Seismology | 0.35 | Sole & Bascompte (2006) — Princeton UP |
+| Epidemic - Seismology | 0.30 | Pastor-Satorras & Vespignani (2001) — *Phys. Rev. Lett.* |
+| Climate - Seismology | 0.25 | Sornette (2006) — *Critical Phenomena in Natural Sciences* |
+
+---
+
+### Key Complexity Concepts in This Model
+
+| Concept | Description | Relevant Nodes |
+|---------|-------------|----------------|
+| **Cascading Failure** | 한 노드 장애가 연쇄적으로 전파 | Power Grid |
+| **Tipping Point** | 임계점 초과 시 비가역적 전이 | Climate, Ecosystem |
+| **Scale-Free Network** | 소수 허브가 대부분의 연결을 보유 | Epidemic, Power Grid |
+| **Small-World Effect** | 짧은 경로로 빠른 전파 | Epidemic |
+| **Self-Organized Criticality** | 외부 조율 없이 임계 상태 유지 | Seismology, Ecosystem |
+
+---
+
+### Recommended Presets
+
+| Scenario | Intensity | Steps | Damping |
+|----------|-----------|-------|---------|
+| 일반 복잡계 분석 | 0.5 | 10 | 0.60 |
+| 대규모 정전 캐스케이딩 | 0.8 | 8 | 0.75 |
+| 기후 티핑 포인트 시나리오 | 0.7 | 15 | 0.65 |
+| 팬데믹 확산 시뮬레이션 | 0.6 | 12 | 0.70 |
+| SOC 임계 상태 관찰 | 0.4 | 20 | 0.85 |
+""")
+
+
 def render_sidebar() -> dict:
     """
     Render the sidebar and return user configuration.
@@ -266,10 +361,12 @@ def render_sidebar() -> dict:
     # Help dialog — content switches based on active preset
     @st.dialog("How to Set Shock Configuration", width="large")
     def _show_help():
-        is_macro = st.session_state.get("active_preset") == "Macro System"
+        active = st.session_state.get("active_preset", "SAP Impact")
 
-        if is_macro:
+        if active == "Macro System":
             _render_macro_help()
+        elif active == "Complex Physics":
+            _render_physics_help()
         else:
             _render_sap_help()
 
