@@ -12,18 +12,18 @@ from utils.helpers import format_percentage
 
 
 def render_market_view(network, simulation_results=None):
-    """Render market fluctuation analysis view."""
+    """Render operations time series analysis view."""
 
-    st.header("Market Fluctuation Analysis")
+    st.header("Operations Time Series Analysis")
 
-    market_nodes = NODE_GROUPS["market"]
+    market_nodes = NODE_GROUPS["core_ops"]
     all_nodes = network.get_nodes()
 
     if simulation_results is not None:
         max_step = ShockSimulator.get_max_step(simulation_results)
 
         # --- Time Series Chart ---
-        st.subheader("Market Node Time Series")
+        st.subheader("Core Operations Time Series")
 
         fig_ts = go.Figure()
 
@@ -56,7 +56,7 @@ def render_market_view(network, simulation_results=None):
         st.plotly_chart(fig_ts, use_container_width=True)
 
         # --- Cumulative Impact Bar ---
-        st.subheader("Cumulative Market Impact")
+        st.subheader("Cumulative Operations Impact")
 
         final_impacts = ShockSimulator.get_final_impacts(simulation_results)
 
@@ -85,8 +85,8 @@ def render_market_view(network, simulation_results=None):
         )
         st.plotly_chart(fig_cum, use_container_width=True)
 
-        # --- Market Correlation Subset ---
-        st.subheader("Market Node Correlations")
+        # --- Core Ops Correlation Subset ---
+        st.subheader("Core Operations Correlations")
 
         adj = network.get_adjacency_dict()
         m_labels = [NODE_LABELS_KO.get(n, n) for n in market_nodes]
@@ -116,7 +116,7 @@ def render_market_view(network, simulation_results=None):
         st.plotly_chart(fig_hm, use_container_width=True)
 
         # --- Summary Metrics ---
-        st.subheader("Market Summary")
+        st.subheader("Operations Summary")
         cols = st.columns(len(market_nodes))
         for i, n in enumerate(market_nodes):
             impact = final_impacts.get(n, 0.0)
@@ -128,10 +128,10 @@ def render_market_view(network, simulation_results=None):
             )
 
     else:
-        st.info("Run a simulation to see market fluctuation analysis.")
+        st.info("Run a simulation to see operations time series analysis.")
 
-        # Show static market correlations
-        st.subheader("Market Node Connections (Static)")
+        # Show static core ops correlations
+        st.subheader("Core Operations Connections (Static)")
         adj = network.get_adjacency_dict()
         for n in market_nodes:
             label = NODE_LABELS_KO.get(n, n)

@@ -14,7 +14,7 @@ from utils.helpers import weight_to_color, weight_to_width, format_percentage
 def render_network_view(network, simulation_results=None):
     """Render the interactive network graph."""
 
-    st.header("Network Topology")
+    st.header("SAP System Topology")
 
     # Centrality method selector
     centrality_method = st.selectbox(
