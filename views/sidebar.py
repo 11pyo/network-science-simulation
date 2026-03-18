@@ -33,6 +33,165 @@ _PRESET_DEPENDENT_KEYS = frozenset({
 })
 
 
+def _render_sap_help():
+    """SAP preset help content — enterprise system context."""
+    st.markdown("""
+## SAP System Impact — Configuration Guide
+
+### Target Node (대상 노드)
+
+충격을 최초 발생시킬 SAP 컴포넌트를 선택합니다.
+
+| Node | Role | Typical Shock Scenario |
+|------|------|----------------------|
+| **SAP Basis** | 시스템 커널, 인스턴스 관리 | Basis 패치 실패, 커널 업그레이드 오류 |
+| **DB/HANA** | 데이터베이스 레이어 | HANA 메모리 부족, 백업 실패 |
+| **Middleware** | RFC/PI/PO/API Gateway | 미들웨어 큐 적체, 인터페이스 중단 |
+| **FI/CO** | 재무/관리회계 | 결산 배치 오류, 전표 Lock |
+| **MM/SD** | 자재/영업 | 주문 처리 지연, MRP 오류 |
+| **SAP ABAP** | 커스텀 개발 프로그램 | ABAP 덤프, 성능 저하 |
+| **Auth Mgmt** | 권한 관리 | 권한 프로파일 오류, 로그인 불가 |
+| **External** | 외부 연계 시스템 | EDI/B2B 연계 장애 |
+| **Infra/OS** | OS/하드웨어 인프라 | 서버 다운, 디스크 풀 |
+
+---
+
+### Shock Intensity (충격 강도) — 0.0 ~ 1.0
+
+| Value | Meaning | SAP Example |
+|-------|---------|------------|
+| **0.1 ~ 0.3** | Minor | 간헐적 Short Dump, 응답 지연 |
+| **0.4 ~ 0.6** | Moderate | 특정 트랜잭션 실패, 배치 중단 |
+| **0.7 ~ 0.9** | Major | 모듈 전면 장애, 서비스 불가 |
+| **1.0** | Full Stop | 인스턴스 완전 다운 |
+
+---
+
+### Simulation Steps (시뮬레이션 단계) — 1 ~ 20
+
+| Value | Meaning | SAP Context |
+|-------|---------|------------|
+| **3 ~ 5** | Short-term | 장애 발생 직후 즉시 영향 범위 |
+| **8 ~ 10** | Mid-term | 일반 분석 **(권장)** |
+| **15 ~ 20** | Long-term | 전체 환경 안정화 시점 확인 |
+
+---
+
+### Damping Factor (감쇠 계수) — 0.1 ~ 0.9
+
+**S(t+1) = Damping x W x S(t)**
+
+| Value | Meaning | SAP Context |
+|-------|---------|------------|
+| **0.1 ~ 0.3** | Fast decay | 시스템 간 격리 잘 됨 (독립 인스턴스) |
+| **0.4 ~ 0.6** | Realistic | **일반 SAP 운영 환경 (권장)** |
+| **0.7 ~ 0.9** | Slow decay | 레거시 커플링 강한 환경, 단일 DB 공유 |
+
+---
+
+### Recommended Presets
+
+| Scenario | Intensity | Steps | Damping |
+|----------|-----------|-------|---------|
+| 일상 장애 분석 | 0.4 | 10 | 0.5 |
+| Worst-case (서버 다운) | 1.0 | 10 | 0.7 |
+| 격리 잘 된 환경 | 0.6 | 10 | 0.3 |
+| 레거시 강결합 환경 | 0.5 | 15 | 0.8 |
+""")
+
+
+def _render_macro_help():
+    """Macro System preset help content — global economy context."""
+    st.markdown("""
+## Macro System Shock — Configuration Guide
+
+### Target Node (대상 노드)
+
+충격을 최초 발생시킬 거시 시스템 섹터를 선택합니다.
+
+| Node | Role | Typical Shock Scenario |
+|------|------|----------------------|
+| **AI / Tech** | 인공지능, 빅테크 생태계 | AI 규제 강화, GPU 공급난, 알고리즘 사고 |
+| **Economy** | 실물경제 (GDP, 고용, 소비) | 경기침체, 실업률 급등, 소비 위축 |
+| **Finance** | 금융시장 (주식, 채권, 신용) | 금리 급변, 은행 위기, 신용경색 |
+| **Supply Chain** | 글로벌 공급망, 무역 | 물류 대란, 관세 전쟁, 원자재 급등 |
+| **Internet / Infra** | 인터넷, 디지털 인프라 | 해저케이블 절단, 클라우드 장애, 사이버 공격 |
+
+---
+
+### Shock Intensity (충격 강도) — 0.0 ~ 1.0
+
+| Value | Meaning | Macro Example |
+|-------|---------|--------------|
+| **0.1 ~ 0.3** | Minor | 단기 변동성 확대, 소규모 공급 차질 |
+| **0.4 ~ 0.6** | Moderate | 섹터별 경기 둔화, 중규모 금융 스트레스 |
+| **0.7 ~ 0.9** | Major | 글로벌 금융위기급, 대규모 공급망 붕괴 |
+| **1.0** | Systemic | 2008 리먼 사태급, 완전한 시스템 마비 |
+
+---
+
+### Simulation Steps (시뮬레이션 단계) — 1 ~ 20
+
+| Value | Meaning | Macro Context |
+|-------|---------|--------------|
+| **3 ~ 5** | Short-term | 즉각적 시장 반응 (며칠~2주) |
+| **8 ~ 10** | Mid-term | 분기 단위 파급 효과 **(권장)** |
+| **15 ~ 20** | Long-term | 연간 구조적 변화 관찰 |
+
+---
+
+### Damping Factor (감쇠 계수) — 0.1 ~ 0.9
+
+**S(t+1) = Damping x W x S(t)**
+
+| Value | Meaning | Macro Context |
+|-------|---------|--------------|
+| **0.1 ~ 0.3** | Fast decay | 강한 정책 개입, 시장 차단기 작동 |
+| **0.4 ~ 0.6** | Realistic | **일반 글로벌 경제 (권장)** |
+| **0.7 ~ 0.9** | Slow decay | 규제 미비, 고도로 연결된 시장 |
+
+---
+
+### Calibrated Damping — Research-Backed by Country
+
+| Country | Recommended | Basis | Source |
+|---------|-------------|-------|--------|
+| **Korea** | **0.65 ~ 0.75** | 소규모 개방경제; 대외 충격 민감도 높음; 밀집된 섹터 간 연결 | Kim, Kim & Lee (2015) — *Int'l Review of Economics & Finance*; Jung & Lee (2019) — Bank of Korea WP |
+| **USA** | **0.50 ~ 0.60** | 대형 다변화 경제; 중간 수준 전파; 자본시장이 충격 흡수 | Diebold & Yilmaz (2014) — *Journal of Econometrics*; Adrian & Brunnermeier (2016) — *American Economic Review* |
+
+> **해석**: Damping이 높을수록 충격이 더 멀리 전파됩니다. 한국 금융 네트워크는 동일 조건에서 미국 대비 ~15% 높은 전파율을 보입니다.
+
+---
+
+### Recommended Presets
+
+| Scenario | Intensity | Steps | Damping |
+|----------|-----------|-------|---------|
+| 일반 섹터 분석 | 0.4 | 10 | 0.55 |
+| Worst-case (글로벌 위기) | 1.0 | 10 | 0.7 |
+| 한국 시장 캘리브레이션 | 0.6 | 12 | 0.70 |
+| 미국 시장 캘리브레이션 | 0.6 | 10 | 0.55 |
+| 강한 정책 개입 시나리오 | 0.7 | 15 | 0.3 |
+
+---
+
+### Default Correlations — Academic Sources
+
+| Pair | r | Source |
+|------|---|--------|
+| Economy - Finance | 0.85 | Fama (1990); Chen, Roll & Ross (1986) |
+| Internet - AI | 0.88 | OECD AI Policy Observatory (2021) |
+| Economy - Supply Chain | 0.78 | Bems et al. (2013); Baldwin & Weder di Mauro (2020) |
+| Economy - Internet | 0.72 | Czernich et al. (2011) |
+| Finance - Internet | 0.70 | BIS Working Papers on FinTech (2019) |
+| Finance - Supply Chain | 0.68 | Ivashina et al. (2015) |
+| Supply Chain - Internet | 0.65 | UNCTAD Digital Economy Report (2021) |
+| Finance - AI | 0.62 | Lopez de Prado (2018) |
+| Economy - AI | 0.60 | Acemoglu & Restrepo (2019) |
+| Supply Chain - AI | 0.58 | McKinsey Global Institute (2020) |
+""")
+
+
 def render_sidebar() -> dict:
     """
     Render the sidebar and return user configuration.
@@ -104,69 +263,15 @@ def render_sidebar() -> dict:
     # -----------------------------------------------------------------------
     st.sidebar.subheader("Shock Configuration")
 
-    # Help dialog
+    # Help dialog — content switches based on active preset
     @st.dialog("How to Set Shock Configuration", width="large")
     def _show_help():
-        st.markdown("""
-### Shock Intensity (충격 강도) — 0.0 ~ 1.0
+        is_macro = st.session_state.get("active_preset") == "Macro System"
 
-| Value | Meaning | When to Use |
-|-------|---------|-------------|
-| **0.1 ~ 0.3** | Minor incident | Slow response, intermittent errors |
-| **0.4 ~ 0.6** | Moderate failure | Partial module down, batch failure |
-| **0.7 ~ 0.9** | Major outage | Service unavailable, critical failure |
-| **1.0** | Full shutdown | Physical server / market complete stop |
-
----
-
-### Simulation Steps (시뮬레이션 단계) — 1 ~ 20
-
-| Value | Meaning | When to Use |
-|-------|---------|-------------|
-| **3 ~ 5** | Short-term | Immediate impact scope |
-| **8 ~ 10** | Mid-term | General analysis **(recommended)** |
-| **15 ~ 20** | Long-term | Observe stabilization point |
-
-> Lower Damping → increase Steps for meaningful observation.
-
----
-
-### Damping Factor (감쇠 계수) — 0.1 ~ 0.9
-
-**Formula: S(t+1) = Damping × W × S(t)**
-
-| Value | Meaning | When to Use |
-|-------|---------|-------------|
-| **0.1 ~ 0.3** | Fast decay | Well-isolated, strong self-recovery |
-| **0.4 ~ 0.6** | Realistic | **Typical environment (recommended)** |
-| **0.7 ~ 0.9** | Slow decay | Tightly coupled / legacy systems |
-
----
-
-### Calibrated Damping — Research-Backed by Country
-
-| Country / Market | Recommended | Basis | Source |
-|------------------|-------------|-------|--------|
-| **Korea** | **0.65 ~ 0.75** | Small open economy; high sensitivity to external shocks; dense inter-sector linkage | Kim, Kim & Lee (2015) — *Int'l Review of Economics & Finance*; Jung & Lee (2019) — Bank of Korea WP |
-| **USA** | **0.50 ~ 0.60** | Large diversified economy; moderate propagation; deep capital markets absorb shocks | Diebold & Yılmaz (2014) — *Journal of Econometrics*; Adrian & Brunnermeier (2016) — *American Economic Review* |
-| **SAP Internal** | **0.50** | Isolated enterprise system; contains shock within application boundary | Network Science simulation default |
-
-> **Interpretation**: A higher damping value means each hop of the shock wave retains more energy — i.e., the system is MORE tightly coupled and shocks spread further.
-> Korean financial networks empirically show ~15 % higher propagation than equivalent US networks under equivalent shock conditions.
-
----
-
-### Recommended Presets
-
-| Scenario | Intensity | Steps | Damping |
-|----------|-----------|-------|---------|
-| Daily incident analysis | 0.4 | 10 | 0.5 |
-| Worst-case scenario | 1.0 | 10 | 0.7 |
-| Well-isolated environment | 0.6 | 10 | 0.3 |
-| Korean market calibration | 0.6 | 12 | 0.7 |
-| US market calibration | 0.6 | 10 | 0.55 |
-| Heavy legacy / SAP coupling | 0.5 | 15 | 0.8 |
-""")
+        if is_macro:
+            _render_macro_help()
+        else:
+            _render_sap_help()
 
     if st.sidebar.button("ℹ How to Set?", use_container_width=True):
         _show_help()
