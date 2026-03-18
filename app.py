@@ -59,7 +59,7 @@ def main():
                     shock_intensity=config["shock_intensity"],
                 )
                 st.session_state.simulation_results = results
-                st.toast("Simulation complete!", icon="")
+                st.toast("Simulation complete!")
             except ValueError as e:
                 # [SECURE] Generic error to user, detail logged server-side (Category 4)
                 logger.error("Simulation error: %s", e)
