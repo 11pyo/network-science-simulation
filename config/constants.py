@@ -1,18 +1,19 @@
 """
 Node definitions, default weights, and simulation parameter boundaries.
+SAP BC / Middleware / SAP Operations context.
 """
 
 # Node definitions: (id, Korean label, English label, color)
 NODES = [
-    ("ai", "AI", "AI", "#FF6B6B"),
-    ("economy", "경제", "Economy", "#4ECDC4"),
-    ("finance", "금융", "Finance", "#45B7D1"),
-    ("supply_chain", "공급망", "Supply Chain", "#96CEB4"),
-    ("internet", "인터넷", "Internet", "#FFEAA7"),
-    ("politics", "정치", "Politics", "#DDA0DD"),
-    ("diplomacy", "외교", "Diplomacy", "#98D8C8"),
-    ("energy", "에너지", "Energy", "#F7DC6F"),
-    ("environment", "환경", "Environment", "#82E0AA"),
+    ("sap_basis", "SAP Basis", "SAP Basis", "#FF6B6B"),
+    ("sap_abap", "SAP ABAP", "SAP ABAP", "#4ECDC4"),
+    ("fi_co", "FI/CO", "FI/CO", "#45B7D1"),
+    ("mm_sd", "MM/SD", "MM/SD", "#96CEB4"),
+    ("middleware", "미들웨어", "Middleware", "#FFEAA7"),
+    ("auth_mgmt", "권한관리", "Auth Mgmt", "#DDA0DD"),
+    ("external", "외부연계", "External", "#98D8C8"),
+    ("db_hana", "DB/HANA", "DB/HANA", "#F7DC6F"),
+    ("infra_os", "Infra/OS", "Infra/OS", "#82E0AA"),
 ]
 
 NODE_IDS = [n[0] for n in NODES]
@@ -41,8 +42,10 @@ CONVERGENCE_THRESHOLD = 0.001
 
 # Node groups for views
 NODE_GROUPS = {
-    "political": ["politics", "diplomacy", "economy", "ai"],
-    "market": ["economy", "finance", "supply_chain"],
+    # [SECURE] Whitelist group definitions - only predefined node IDs (Category 1)
+    "governance": ["auth_mgmt", "external", "sap_basis", "sap_abap"],
+    "core_ops": ["sap_basis", "db_hana", "middleware"],
+    "business": ["fi_co", "mm_sd", "sap_abap"],
     "all": NODE_IDS[:],
 }
 

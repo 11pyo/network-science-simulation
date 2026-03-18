@@ -14,14 +14,14 @@ from utils.helpers import format_percentage
 
 
 def render_political_view(network, simulation_results=None):
-    """Render political impact analysis view."""
+    """Render governance & impact analysis view."""
 
-    st.header("Political Impact Analysis")
+    st.header("Governance & Impact Analysis")
 
-    political_nodes = NODE_GROUPS["political"]
+    governance_nodes = NODE_GROUPS["governance"]
 
-    # --- Correlation Heatmap for Political Nodes ---
-    st.subheader("Political Correlation Matrix")
+    # --- Correlation Heatmap ---
+    st.subheader("System Correlation Matrix")
 
     adj = network.get_adjacency_dict()
     all_nodes = network.get_nodes()
@@ -92,14 +92,14 @@ def render_political_view(network, simulation_results=None):
         )
         st.plotly_chart(fig_bar, use_container_width=True)
 
-        # Radar chart: political influence reach
-        st.subheader("Political Influence Radar")
+        # Radar chart: core system influence reach
+        st.subheader("Core System Influence Radar")
 
         categories = [NODE_LABELS_KO.get(n, n) for n in all_nodes]
 
         fig_radar = go.Figure()
 
-        for pol_node in ["politics", "diplomacy"]:
+        for pol_node in ["sap_basis", "db_hana"]:
             # Get weight connections from this political node to all others
             vals = []
             for n in all_nodes:
@@ -124,7 +124,7 @@ def render_political_view(network, simulation_results=None):
         st.plotly_chart(fig_radar, use_container_width=True)
 
     else:
-        st.info("Run a simulation to see political impact analysis.")
+        st.info("Run a simulation to see governance & impact analysis.")
 
 
 # --------------------------------------------------

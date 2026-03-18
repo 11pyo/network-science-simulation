@@ -35,11 +35,11 @@ def render_sidebar() -> dict:
     Returns:
         dict with keys: weights, shock_node, shock_intensity, steps, damping
     """
-    st.sidebar.title("Network Science Simulation")
+    st.sidebar.title("SAP System Impact Simulation")
     st.sidebar.markdown("---")
 
-    # --- Correlation Coefficients ---
-    st.sidebar.subheader("Correlation Coefficients")
+    # --- System Correlation Coefficients ---
+    st.sidebar.subheader("System Correlations")
 
     weights = {}
 

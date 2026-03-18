@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     st.set_page_config(
-        page_title="Network Science Simulation",
+        page_title="SAP System Impact Simulation",
         page_icon="",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -72,9 +72,9 @@ def main():
 
         # Render views in tabs
         tab1, tab2, tab3 = st.tabs([
-            "Network Simulation",
-            "Political Impact",
-            "Market Fluctuation",
+            "System Topology",
+            "Governance & Impact",
+            "Operations Time Series",
         ])
 
         with tab1:
