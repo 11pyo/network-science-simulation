@@ -6,7 +6,7 @@ import logging
 import networkx as nx
 import numpy as np
 
-from config.constants import VALID_NODE_IDS, WEIGHT_MIN, WEIGHT_MAX
+from config.constants import WEIGHT_MIN, WEIGHT_MAX
 from utils.validators import validate_node_id, validate_weight, validate_centrality_method
 
 logger = logging.getLogger(__name__)

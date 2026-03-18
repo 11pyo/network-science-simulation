@@ -14,13 +14,17 @@ from config.constants import (
     SHOCK_MAX,
     MAX_SIMULATION_STEPS,
 )
+from config.macro_preset import VALID_MACRO_NODE_IDS
 
 logger = logging.getLogger(__name__)
+
+# [SECURE] Combined whitelist of all valid node IDs across all presets (Category 1)
+_ALL_VALID_NODE_IDS = VALID_NODE_IDS | VALID_MACRO_NODE_IDS
 
 
 # [SECURE] Whitelist validation - prevents arbitrary node ID injection (Category 1)
 def validate_node_id(node_id: str) -> str:
-    if node_id not in VALID_NODE_IDS:
+    if node_id not in _ALL_VALID_NODE_IDS:
         logger.warning("Invalid node_id attempted: %s", node_id)
         raise ValueError("Invalid node selection.")
     return node_id
