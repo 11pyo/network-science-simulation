@@ -11,10 +11,16 @@ from models.simulation import ShockSimulator
 from utils.helpers import weight_to_color, weight_to_width, format_percentage
 
 
-def render_network_view(network, simulation_results=None):
+def render_network_view(network, simulation_results=None, preset=None):
     """Render the interactive network graph."""
 
-    st.header("SAP System Topology")
+    # Use preset data if provided, else fall back to SAP defaults
+    node_labels   = preset["node_labels"]   if preset else NODE_LABELS_KO
+    node_colors   = preset["node_colors"]   if preset else NODE_COLORS
+    node_positions = preset["node_positions"] if preset else NODE_POSITIONS
+    header_title  = (preset["title"] + " — Topology") if preset else "SAP System Topology"
+
+    st.header(header_title)
 
     # Centrality method selector
     centrality_method = st.selectbox(
@@ -24,13 +30,13 @@ def render_network_view(network, simulation_results=None):
         key="centrality_method",
     )
 
-    centrality = network.get_centrality(centrality_method)
-    edge_weights = network.get_edge_weights()
-    nodes = network.get_nodes()
+    centrality    = network.get_centrality(centrality_method)
+    edge_weights  = network.get_edge_weights()
+    nodes         = network.get_nodes()
 
     # Time step control if simulation ran
     current_step = 0
-    step_data = {}
+    step_data    = {}
     if simulation_results is not None:
         max_step = ShockSimulator.get_max_step(simulation_results)
         if max_step > 0:
@@ -44,8 +50,8 @@ def render_network_view(network, simulation_results=None):
 
     # Draw edges
     for (a, b), w in edge_weights.items():
-        x0, y0 = NODE_POSITIONS.get(a, (0, 0))
-        x1, y1 = NODE_POSITIONS.get(b, (0, 0))
+        x0, y0 = node_positions.get(a, (0, 0))
+        x1, y1 = node_positions.get(b, (0, 0))
 
         fig.add_trace(go.Scatter(
             x=[x0, x1, None],
@@ -56,26 +62,26 @@ def render_network_view(network, simulation_results=None):
                 color=weight_to_color(w),
             ),
             hoverinfo="text",
-            text=f"{NODE_LABELS_KO.get(a, a)} - {NODE_LABELS_KO.get(b, b)}: {w:.2f}",
+            text=f"{node_labels.get(a, a)} - {node_labels.get(b, b)}: {w:.2f}",
             showlegend=False,
         ))
 
     # Draw nodes
-    node_x = []
-    node_y = []
-    node_text = []
-    node_sizes = []
-    node_colors_list = []
+    node_x             = []
+    node_y             = []
+    node_text          = []
+    node_sizes         = []
+    node_colors_list   = []
 
     for n in nodes:
-        x, y = NODE_POSITIONS.get(n, (0, 0))
+        x, y = node_positions.get(n, (0, 0))
         node_x.append(x)
         node_y.append(y)
 
-        c = centrality.get(n, 0.0)
+        c      = centrality.get(n, 0.0)
         impact = step_data.get(n, 0.0)
 
-        label = NODE_LABELS_KO.get(n, n)
+        label = node_labels.get(n, n)
         hover = f"<b>{label}</b><br>Centrality: {c:.3f}"
         if step_data:
             hover += f"<br>Impact: {format_percentage(impact)}"
@@ -93,7 +99,7 @@ def render_network_view(network, simulation_results=None):
             alpha = min(abs(impact) * 0.8 + 0.2, 1.0)
             node_colors_list.append(f"rgba({r},{g},{b_val},{alpha})")
         else:
-            node_colors_list.append(NODE_COLORS.get(n, "#888888"))
+            node_colors_list.append(node_colors.get(n, "#888888"))
 
     fig.add_trace(go.Scatter(
         x=node_x,
@@ -104,7 +110,7 @@ def render_network_view(network, simulation_results=None):
             color=node_colors_list,
             line=dict(width=2, color="white"),
         ),
-        text=[NODE_LABELS_KO.get(n, n) for n in nodes],
+        text=[node_labels.get(n, n) for n in nodes],
         textposition="top center",
         textfont=dict(size=12),
         hoverinfo="text",
@@ -141,6 +147,7 @@ def render_network_view(network, simulation_results=None):
 # Applied:
 #   - Input validation: Centrality method via selectbox whitelist (Category 1)
 #   - Null check: step_data checked before use (Category 5)
+#   - Null check: preset checked before use with fallback (Category 5)
 # Not Applied:
 #   - [WARN] SQL Injection: Not applicable - no database
 #   - [WARN] XSS: Plotly escapes hover text internally

@@ -11,7 +11,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import streamlit as st
 
-from config.constants import NODE_IDS
 from models.network import NetworkModel
 from models.simulation import ShockSimulator
 from views.sidebar import render_sidebar
@@ -43,8 +42,8 @@ def main():
         # Render sidebar and get user configuration
         config = render_sidebar()
 
-        # Build network model from current weights
-        network = NetworkModel(NODE_IDS, config["weights"])
+        # Build network model from current preset node IDs and weights
+        network = NetworkModel(config["preset"]["node_ids"], config["weights"])
 
         # Run simulation if requested
         if config["run_simulation"]:
@@ -69,6 +68,7 @@ def main():
                 st.error("An unexpected error occurred. Please try again.")
 
         results = st.session_state.simulation_results
+        preset  = config["preset"]
 
         # Render views in tabs
         tab1, tab2, tab3 = st.tabs([
@@ -78,13 +78,13 @@ def main():
         ])
 
         with tab1:
-            render_network_view(network, results)
+            render_network_view(network, results, preset=preset)
 
         with tab2:
-            render_political_view(network, results)
+            render_political_view(network, results, preset=preset)
 
         with tab3:
-            render_market_view(network, results)
+            render_market_view(network, results, preset=preset)
 
     except Exception as e:
         # [SECURE] Global error handler - log details, show generic message (Category 4)
