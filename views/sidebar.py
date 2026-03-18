@@ -66,6 +66,58 @@ def render_sidebar() -> dict:
     # --- Shock Configuration ---
     st.sidebar.subheader("Shock Configuration")
 
+    # Help dialog for shock configuration
+    @st.dialog("How to Set Shock Configuration", width="large")
+    def _show_help():
+        st.markdown("""
+### Shock Intensity (충격 강도) — 0.0 ~ 1.0
+
+| Value | Meaning | When to Use |
+|-------|---------|-------------|
+| **0.1 ~ 0.3** | Minor incident | Slow response, intermittent errors |
+| **0.4 ~ 0.6** | Moderate failure | Partial module down, batch failure |
+| **0.7 ~ 0.9** | Major outage | Service unavailable, critical failure |
+| **1.0** | Full shutdown | Physical server down, complete stop |
+
+---
+
+### Simulation Steps (시뮬레이션 단계) — 1 ~ 20
+
+| Value | Meaning | When to Use |
+|-------|---------|-------------|
+| **3 ~ 5** | Short-term | Immediate impact scope |
+| **8 ~ 10** | Mid-term | General analysis **(recommended)** |
+| **15 ~ 20** | Long-term | Observe stabilization point |
+
+> Lower Damping → increase Steps for meaningful observation.
+
+---
+
+### Damping Factor (감쇠 계수) — 0.1 ~ 0.9
+
+**Formula: S(t+1) = Damping × W × S(t)**
+
+| Value | Meaning | When to Use |
+|-------|---------|-------------|
+| **0.1 ~ 0.3** | Fast decay | Well-isolated, strong self-recovery |
+| **0.4 ~ 0.6** | Realistic | **Typical SAP environment (recommended)** |
+| **0.7 ~ 0.9** | Slow decay | Legacy, strongly coupled systems |
+
+---
+
+### Recommended Presets
+
+| Scenario | Intensity | Steps | Damping |
+|----------|-----------|-------|---------|
+| Daily incident analysis | 0.4 | 10 | 0.5 |
+| Worst-case scenario | 1.0 | 10 | 0.7 |
+| Well-isolated environment | 0.6 | 10 | 0.3 |
+| Heavy legacy integration | 0.5 | 15 | 0.8 |
+""")
+
+    if st.sidebar.button("ℹ How to Set?", use_container_width=True):
+        _show_help()
+
     # [SECURE] Selectbox only offers predefined node IDs (Category 1)
     shock_node = st.sidebar.selectbox(
         "Target Node",
