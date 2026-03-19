@@ -105,7 +105,7 @@ def _render_macro_help():
     st.markdown("""
 ## Macro System Shock — Configuration Guide
 
-### Target Node (대상 노드)
+### Target Node (대상 노드) — 8개
 
 충격을 최초 발생시킬 거시 시스템 섹터를 선택합니다.
 
@@ -116,6 +116,11 @@ def _render_macro_help():
 | **Finance** | 금융시장 (주식, 채권, 신용) | 금리 급변, 은행 위기, 신용경색 |
 | **Supply Chain** | 글로벌 공급망, 무역 | 물류 대란, 관세 전쟁, 원자재 급등 |
 | **Internet / Infra** | 인터넷, 디지털 인프라 | 해저케이블 절단, 클라우드 장애, 사이버 공격 |
+| **Energy** | 에너지·자원 (석유, 가스, 전력) | 유가 급등, OPEC 감산, 에너지 전환 충격 |
+| **Gov. Policy** | 정부·정책 (재정·통화) | 금리 인상, 긴축 재정, 규제 강화 |
+| **Real Estate** | 부동산 시장 | 버블 붕괴, 모기지 위기, 건설 경기 침체 |
+
+> **연결 안 된 쌍**: Real Estate ↔ AI, Real Estate ↔ Internet (학술적 직접 근거 부족)
 
 ---
 
@@ -123,20 +128,10 @@ def _render_macro_help():
 
 | Value | Meaning | Macro Example |
 |-------|---------|--------------|
-| **0.1 ~ 0.3** | Minor | 단기 변동성 확대, 소규모 공급 차질 |
-| **0.4 ~ 0.6** | Moderate | 섹터별 경기 둔화, 중규모 금융 스트레스 |
-| **0.7 ~ 0.9** | Major | 글로벌 금융위기급, 대규모 공급망 붕괴 |
-| **1.0** | Systemic | 2008 리먼 사태급, 완전한 시스템 마비 |
-
----
-
-### Simulation Steps (시뮬레이션 단계) — 1 ~ 20
-
-| Value | Meaning | Macro Context |
-|-------|---------|--------------|
-| **3 ~ 5** | Short-term | 즉각적 시장 반응 (며칠~2주) |
-| **8 ~ 10** | Mid-term | 분기 단위 파급 효과 **(권장)** |
-| **15 ~ 20** | Long-term | 연간 구조적 변화 관찰 |
+| **0.1 ~ 0.3** | Minor | 단기 변동성, 소규모 공급 차질 |
+| **0.4 ~ 0.6** | Moderate | 섹터별 둔화, 중규모 금융 스트레스 |
+| **0.7 ~ 0.9** | Major | 글로벌 금융위기급, 공급망 붕괴 |
+| **1.0** | Systemic | 2008 리먼 사태급, 시스템 마비 |
 
 ---
 
@@ -152,43 +147,30 @@ def _render_macro_help():
 
 ---
 
-### Calibrated Damping — Research-Backed by Country
+### Calibrated Damping — Research-Backed
 
-| Country | Recommended | Basis | Source |
-|---------|-------------|-------|--------|
-| **Korea** | **0.65 ~ 0.75** | 소규모 개방경제; 대외 충격 민감도 높음; 밀집된 섹터 간 연결 | Kim, Kim & Lee (2015) — *Int'l Review of Economics & Finance*; Jung & Lee (2019) — Bank of Korea WP |
-| **USA** | **0.50 ~ 0.60** | 대형 다변화 경제; 중간 수준 전파; 자본시장이 충격 흡수 | Diebold & Yilmaz (2014) — *Journal of Econometrics*; Adrian & Brunnermeier (2016) — *American Economic Review* |
-
-> **해석**: Damping이 높을수록 충격이 더 멀리 전파됩니다. 한국 금융 네트워크는 동일 조건에서 미국 대비 ~15% 높은 전파율을 보입니다.
+| Country | Recommended | Source |
+|---------|-------------|--------|
+| **Korea** | **0.65 ~ 0.75** | Kim, Kim & Lee (2015); Jung & Lee (2019) |
+| **USA** | **0.50 ~ 0.60** | Diebold & Yilmaz (2014); Adrian & Brunnermeier (2016) |
 
 ---
 
-### Recommended Presets
-
-| Scenario | Intensity | Steps | Damping |
-|----------|-----------|-------|---------|
-| 일반 섹터 분석 | 0.4 | 10 | 0.55 |
-| Worst-case (글로벌 위기) | 1.0 | 10 | 0.7 |
-| 한국 시장 캘리브레이션 | 0.6 | 12 | 0.70 |
-| 미국 시장 캘리브레이션 | 0.6 | 10 | 0.55 |
-| 강한 정책 개입 시나리오 | 0.7 | 15 | 0.3 |
-
----
-
-### Default Correlations — Academic Sources
+### Default Correlations — Top Pairs
 
 | Pair | r | Source |
 |------|---|--------|
-| Economy - Finance | 0.85 | Fama (1990); Chen, Roll & Ross (1986) |
 | Internet - AI | 0.88 | OECD AI Policy Observatory (2021) |
-| Economy - Supply Chain | 0.78 | Bems et al. (2013); Baldwin & Weder di Mauro (2020) |
-| Economy - Internet | 0.72 | Czernich et al. (2011) |
-| Finance - Internet | 0.70 | BIS Working Papers on FinTech (2019) |
-| Finance - Supply Chain | 0.68 | Ivashina et al. (2015) |
-| Supply Chain - Internet | 0.65 | UNCTAD Digital Economy Report (2021) |
-| Finance - AI | 0.62 | Lopez de Prado (2018) |
-| Economy - AI | 0.60 | Acemoglu & Restrepo (2019) |
-| Supply Chain - AI | 0.58 | McKinsey Global Institute (2020) |
+| Economy - Finance | 0.85 | Fama (1990); Chen, Roll & Ross (1986) |
+| Finance - Real Estate | 0.85 | Reinhart & Rogoff (2009) |
+| Supply Chain - Energy | 0.82 | IEA World Energy Outlook (2022) |
+| Finance - Government | 0.82 | Bernanke & Kuttner (2005) |
+| Economy - Energy | 0.80 | Hamilton (2003); Kilian (2009) |
+| Economy - Gov. | 0.78 | Blanchard & Perotti (2002) |
+| Economy - Real Estate | 0.78 | Leamer (2007); Mian & Sufi (2014) |
+| Energy - Government | 0.75 | Fattouh et al. (2016) |
+
+> 연결 안 된 쌍(Real Estate-AI, Real Estate-Internet)은 Topology에서 엣지가 없어 충격이 **간접 경로**로만 전파됩니다.
 """)
 
 
@@ -197,7 +179,7 @@ def _render_physics_help():
     st.markdown("""
 ## Complex Systems Physics — Configuration Guide
 
-### Target Node (대상 노드)
+### Target Node (대상 노드) — 8개
 
 충격을 최초 발생시킬 복잡계 물리학 영역을 선택합니다.
 
@@ -208,6 +190,11 @@ def _render_physics_help():
 | **Climate** | 기후 시스템 (대기·해양) | 극한 기상, 티핑 포인트 초과, 엘니뇨 |
 | **Seismology** | 지진·지질 역학 | 대지진 발생, 화산 분출, 지각 변동 |
 | **Ecosystem** | 생태계 (생물 다양성) | 종 멸종, 서식지 파괴, 먹이사슬 붕괴 |
+| **Hydrology** | 수문·수자원 (강수, 지하수) | 대홍수, 가뭄, 댐 붕괴 |
+| **Wildfire** | 산불 역학 | 대형 산불, 연쇄 발화, 연무 재해 |
+| **Ocean Circ.** | 해양 순환 (열염순환) | AMOC 약화, 엘니뇨 극대화, 해수면 상승 |
+
+> **연결 안 된 쌍**: Wildfire ↔ Seismology, Wildfire ↔ Ocean, Ocean ↔ Epidemic, Ocean ↔ Power Grid (물리적 메커니즘 부재)
 
 ---
 
@@ -216,19 +203,9 @@ def _render_physics_help():
 | Value | Meaning | Physics Example |
 |-------|---------|----------------|
 | **0.1 ~ 0.3** | Minor | 소규모 정전, 국지적 이상기후 |
-| **0.4 ~ 0.6** | Moderate | 지역 전력망 캐스케이딩, 전염병 유행 |
+| **0.4 ~ 0.6** | Moderate | 지역 캐스케이딩, 전염병 유행 |
 | **0.7 ~ 0.9** | Major | 대륙급 정전, 기후 티핑 포인트 접근 |
 | **1.0** | Catastrophic | M9.0 대지진, 글로벌 팬데믹 |
-
----
-
-### Simulation Steps (시뮬레이션 단계) — 1 ~ 20
-
-| Value | Meaning | Physics Context |
-|-------|---------|----------------|
-| **3 ~ 5** | Short-term | 캐스케이딩 초기 전파 (수 시간~수 일) |
-| **8 ~ 10** | Mid-term | 시스템 간 교차 영향 **(권장)** |
-| **15 ~ 20** | Long-term | 레짐 시프트, 새 평형 도달 관찰 |
 
 ---
 
@@ -240,38 +217,38 @@ def _render_physics_help():
 |-------|---------|----------------|
 | **0.1 ~ 0.3** | Fast decay | 안전장치 작동, 회로 차단기 동작 |
 | **0.4 ~ 0.6** | Realistic | **일반 복잡계 전파 (권장)** |
-| **0.7 ~ 0.9** | Slow decay | Self-Organized Criticality (SOC) 상태 |
+| **0.7 ~ 0.9** | Slow decay | SOC 상태, 임계 근접 시스템 |
 
-> **SOC (자기조직 임계성)**: Bak, Tang & Wiesenfeld (1987). 모래더미 모델처럼 시스템이 스스로 임계 상태를 유지하며 멱법칙(power-law) 분포의 연쇄 반응을 일으킵니다.
+> **SOC (자기조직 임계성)**: Bak, Tang & Wiesenfeld (1987). 모래더미 모델처럼 시스템이 스스로 임계 상태를 유지하며 멱법칙(power-law) 연쇄 반응을 보입니다.
 
 ---
 
-### Default Correlations — Academic Sources
+### Default Correlations — Top Pairs
 
 | Pair | r | Source |
 |------|---|--------|
-| Climate - Ecosystem | 0.82 | Scheffer et al. (2001) — *Nature*; Strogatz (2001) |
-| Power Grid - Climate | 0.72 | Dobson et al. (2007) — *CHAOS*; Panteli & Mancarella (2015) |
-| Epidemic - Climate | 0.68 | Mordecai et al. (2019); Lenton et al. (2008) — *PNAS* |
-| Epidemic - Ecosystem | 0.62 | Keesing et al. (2010) — *Nature*; May (1972) |
-| Power Grid - Seismology | 0.55 | Romero et al. (2015); Barabasi & Albert (1999) |
-| Power Grid - Ecosystem | 0.45 | Barnosky et al. (2012) — *Nature* |
-| Power Grid - Epidemic | 0.38 | Buldyrev et al. (2010) — *Nature* |
-| Ecosystem - Seismology | 0.35 | Sole & Bascompte (2006) — Princeton UP |
-| Epidemic - Seismology | 0.30 | Pastor-Satorras & Vespignani (2001) — *Phys. Rev. Lett.* |
-| Climate - Seismology | 0.25 | Sornette (2006) — *Critical Phenomena in Natural Sciences* |
+| Ocean - Climate | 0.85 | Broecker (1997); Rahmstorf (2002) |
+| Climate - Ecosystem | 0.82 | Scheffer et al. (2001) — *Nature* |
+| Hydrology - Climate | 0.80 | Oki & Kanae (2006) — *Science* |
+| Wildfire - Ecosystem | 0.80 | Bowman et al. (2009) — *Science* |
+| Wildfire - Climate | 0.78 | Westerling et al. (2006) — *Science* |
+| Hydrology - Ecosystem | 0.75 | Vorosmarty et al. (2010) — *Nature* |
+| Power Grid - Climate | 0.72 | Dobson et al. (2007) — *CHAOS* |
+| Ocean - Ecosystem | 0.72 | Chavez et al. (2003) — *Science* |
+
+> 연결 안 된 쌍(Wildfire-Seismology 등)은 충격이 **간접 경로**로만 도달합니다.
 
 ---
 
-### Key Complexity Concepts in This Model
+### Key Complexity Concepts
 
 | Concept | Description | Relevant Nodes |
 |---------|-------------|----------------|
-| **Cascading Failure** | 한 노드 장애가 연쇄적으로 전파 | Power Grid |
-| **Tipping Point** | 임계점 초과 시 비가역적 전이 | Climate, Ecosystem |
-| **Scale-Free Network** | 소수 허브가 대부분의 연결을 보유 | Epidemic, Power Grid |
-| **Small-World Effect** | 짧은 경로로 빠른 전파 | Epidemic |
-| **Self-Organized Criticality** | 외부 조율 없이 임계 상태 유지 | Seismology, Ecosystem |
+| **Cascading Failure** | 한 노드 장애가 연쇄적으로 전파 | Power Grid, Wildfire |
+| **Tipping Point** | 임계점 초과 시 비가역적 전이 | Climate, Ecosystem, Ocean |
+| **Scale-Free Network** | 소수 허브가 대부분의 연결 보유 | Epidemic, Power Grid |
+| **Small-World Effect** | 짧은 경로로 빠른 전파 | Epidemic, Hydrology |
+| **Self-Organized Criticality** | 외부 조율 없이 임계 상태 유지 | Seismology, Wildfire |
 
 ---
 
