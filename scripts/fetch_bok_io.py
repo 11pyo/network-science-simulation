@@ -20,10 +20,14 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))   # run from a clone
+from cxsim import io_scenario  # noqa: E402
 
 ENDPOINT = "https://ecos.bok.or.kr/serviceEndpoint/httpService/request.json"
 DOWNLOAD = "https://ecos.bok.or.kr/serviceEndpoint/fileDownload?"
@@ -54,9 +58,13 @@ def parse_years(text: str) -> list[int]:
     for part in text.split(","):
         if "-" in part:
             a, b = (int(x) for x in part.split("-"))
+            if a > b:
+                raise ValueError(f"Year range {part} runs backwards.")
             out.extend(range(a, b + 1))
         else:
             out.append(int(part))
+    if not out:
+        raise ValueError("No year given.")
     bad = [y for y in out if y not in NODES]
     if bad:
         raise ValueError(f"No table offered for {bad}; available {min(NODES)}-{max(NODES)}.")
@@ -67,8 +75,7 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--years", default="2020")
     ap.add_argument("--levels", default="large", help="comma list of: " + ", ".join(LEVELS))
-    base = os.environ.get("LOCALAPPDATA") or str(Path.home())
-    ap.add_argument("--out", type=Path, default=Path(base) / "nss-renewal-data" / "io_bok" / "downloads")
+    ap.add_argument("--out", type=Path, default=io_scenario.default_dir())
     ap.add_argument("--provenance", default="PROVENANCE_ecos_files.txt")
     a = ap.parse_args(argv)
     try:
@@ -78,6 +85,15 @@ def main(argv: list[str]) -> int:
         print(f"Bad argument: {e}")
         return 2
     a.out.mkdir(parents=True, exist_ok=True)
+    try:
+        return _fetch(a, years, levels)
+    except (urllib.error.URLError, OSError, ValueError, KeyError) as e:
+        # [SECURE] Short reason, no stack trace (Category 4)
+        print(f"stopped: {e.__class__.__name__}: {str(e)[:200]}")
+        return 1
+
+
+def _fetch(a, years: list[int], levels: list[str]) -> int:
     lines, bad = [], 0
     for y in years:
         ds = NODES[y]
@@ -103,8 +119,14 @@ def main(argv: list[str]) -> int:
                     continue
                 url = DOWNLOAD + urllib.parse.urlencode({"filePath": fp, "fileName": fn})
                 req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "https://ecos.bok.or.kr/"})
-                with urllib.request.urlopen(req, timeout=TIMEOUT * 2) as r:
-                    blob = r.read(MAX_BYTES + 1)
+                try:
+                    with urllib.request.urlopen(req, timeout=TIMEOUT * 2) as r:
+                        blob = r.read(MAX_BYTES + 1)
+                except (urllib.error.URLError, OSError) as e:
+                    # [SECURE] Logged and counted, not swallowed (Category 4)
+                    print(f"download failed ({e.__class__.__name__}): {safe}")
+                    bad += 1
+                    continue
                 time.sleep(1.0)
                 # [SECURE] Accept only a plausible xlsx container (Category 1)
                 if len(blob) > MAX_BYTES or len(blob) < 20000 or blob[:4] != b"PK\x03\x04":
@@ -116,14 +138,16 @@ def main(argv: list[str]) -> int:
                 os.replace(tmp, dst)      # [SECURE] Atomic placement (Category 3)
                 digest = hashlib.sha256(blob).hexdigest()
                 when = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-                lines.append(f"- file: {safe}\n  size_bytes: {len(blob)}\n  sha256: {digest}\n  downloaded_at_utc: {when}\n"
-                             f"  source: ECOS file service, node {ds}, item {c['cd']}\n")
+                entry = (f"- file: {safe}\n  size_bytes: {len(blob)}\n  sha256: {digest}\n  downloaded_at_utc: {when}\n"
+                         f"  source: ECOS file service, node {ds}, item {c['cd']}\n")
+                # [SECURE] Append-only provenance, written right after each file so a later failure cannot orphan it (Category 3, 5)
+                with open(a.out / a.provenance, "a", encoding="utf-8", newline="\n") as pf:
+                    pf.write(entry + "\n")
+                lines.append(entry)
                 print(f"OK {len(blob):>9} bytes  {safe}")
-    if lines:
-        # [SECURE] Append-only provenance record (Category 3, 5)
-        with open(a.out / a.provenance, "a", encoding="utf-8", newline="\n") as f:
-            f.write("\n".join(lines) + "\n")
     print(f"done: {len(lines)} new file(s) in {a.out}")
+    if 2020 in years and "통합대분류" in levels and not (a.out / io_scenario.BENCHMARK_FILE).is_file():
+        print(f"warning: the calculator expects {io_scenario.BENCHMARK_FILE} in {a.out}, which is not there.")
     return 1 if bad else 0
 
 

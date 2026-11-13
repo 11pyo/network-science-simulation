@@ -19,11 +19,17 @@ behaviour are outside the model.
 **Install and run**
 
 ```bash
-pip install "cxsim[app] @ git+https://github.com/11pyo/network-science-simulation"
+git clone https://github.com/11pyo/network-science-simulation
+cd network-science-simulation
+pip install -e ".[app]"
 python scripts/fetch_bok_io.py --years 2020 --levels large      # download the Bank of Korea table
 python examples/tariff_export_scenario.py --sector C12 --percent -10
-streamlit run app.py                                             # the web screens (from a clone)
+streamlit run app.py                                             # the web screens
 ```
+
+To use only the library in your own code: `pip install "git+https://github.com/11pyo/network-science-simulation"`
+and `from cxsim import io_scenario`. Data go to `%LOCALAPPDATA%\nss-renewal-data\io_bok\downloads` on Windows
+and `~/nss-renewal-data/io_bok/downloads` elsewhere.
 
 `scripts/fetch_bok_io.py` uses the file service behind the ECOS website, not the official Open API;
 it may change without notice. Data files are not redistributed in this repository.

@@ -53,8 +53,9 @@ class IOTables:
 def default_dir() -> Path | None:
     import os
 
-    base = os.environ.get("LOCALAPPDATA")
-    return Path(base) / "nss-renewal-data" / "io_bok" / "downloads" if base else None
+    # LOCALAPPDATA on Windows; the home folder elsewhere (same rule as scripts/fetch_bok_io.py)
+    base = os.environ.get("LOCALAPPDATA") or str(Path.home())
+    return Path(base) / "nss-renewal-data" / "io_bok" / "downloads"
 
 
 # Cache layout revision; bump when the cached array layout changes.

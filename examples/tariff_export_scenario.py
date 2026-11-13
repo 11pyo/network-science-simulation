@@ -17,7 +17,8 @@ import csv
 import sys
 from pathlib import Path
 
-from cxsim import io_scenario as sc
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))   # also works from a clone without installing
+from cxsim import io_scenario as sc  # noqa: E402
 
 
 def main(argv: list[str]) -> int:
@@ -33,7 +34,12 @@ def main(argv: list[str]) -> int:
               "    python scripts/fetch_bok_io.py --years 2020 --levels large\n"
               f"(expected: {sc.BENCHMARK_FILE} in the data folder)")
         return 1
-    tables = sc.load_tables(a.data)
+    try:
+        tables = sc.load_tables(a.data)
+    except (OSError, ValueError) as err:
+        # [SECURE] Short reason only (Category 4)
+        print(f"Could not load the table ({err}). Re-run scripts/fetch_bok_io.py so the file and its hash are recorded.")
+        return 1
     if a.sector not in tables.codes:
         print(f"Unknown sector {a.sector}. Codes: {', '.join(tables.codes)}")
         return 2
