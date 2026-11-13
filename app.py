@@ -18,6 +18,7 @@ from views.network_view import render_network_view
 from views.political_view import render_political_view
 from views.market_view import render_market_view
 from views.renewal_view import render_renewal_view
+from views.industry_view import render_industry_view
 
 # [SECURE] Server-side logging only - no stack traces to users (Category 4)
 logging.basicConfig(
@@ -43,7 +44,12 @@ def main():
     # It stays reachable only as defect reproduction, off by default.
     legacy_mode = st.sidebar.toggle("레거시 화면 (결함 재현용)", value=False, key="legacy_mode")
     if not legacy_mode:
+        # [SECURE] Page choice limited to a fixed whitelist (Category 1)
+        page = st.sidebar.radio("화면", ["네트워크 스트레스 테스트", "산업연관 시나리오 계산기"], key="page")
         try:
+            if page == "산업연관 시나리오 계산기":
+                render_industry_view()
+                return
             render_renewal_view()
         except Exception as e:
             # [SECURE] Log details server-side, show generic message (Category 4)
