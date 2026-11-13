@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 DebtRank distress propagation (Battiston et al., 2012, Sci. Rep. 2:541).
 

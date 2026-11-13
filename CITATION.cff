@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Network Stress Test / cxsim: stable propagation engine and Korean input-output scenario calculator"
+authors:
+  - alias: "11pyo"
+repository-code: "https://github.com/11pyo/network-science-simulation"
+license: Apache-2.0
+version: 0.2.0
+date-released: 2026-11-13

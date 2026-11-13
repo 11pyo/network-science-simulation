@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 P1-industry gate 2 (spec locked in 98e957d, mapping in 8813afd/63823eb).
 

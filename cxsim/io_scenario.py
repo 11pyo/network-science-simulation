@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 Industry shock scenario calculator (P1-industry product, PM decision 2026-11-12).
 
@@ -55,8 +57,12 @@ def default_dir() -> Path | None:
     return Path(base) / "nss-renewal-data" / "io_bok" / "downloads" if base else None
 
 
+# Cache layout revision; bump when the cached array layout changes.
+_TABLE_LAYOUT_REV = "k33-28bab052"
+
+
 def cache_path(downloads: Path, digest: str) -> Path:
-    return Path(downloads).parent / "derived" / f"io_scenario_cache_{digest[:16]}.npz"
+    return Path(downloads).parent / "derived" / f"io_scenario_cache_{digest[:16]}_{_TABLE_LAYOUT_REV}.npz"
 
 
 def load_tables(downloads: Path, use_cache: bool = True) -> IOTables:

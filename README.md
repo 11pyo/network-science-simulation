@@ -1,5 +1,38 @@
 # Network Stress Test
 
+## English summary
+
+**What it is.** A small Python package (`cxsim`) and a Streamlit app with two tools:
+
+1. A *stable* signed propagation engine for directed influence graphs (stability check per strongly
+   connected component, amplification cap, no clipping, range Monte Carlo, Sobol/Morris sensitivity).
+2. A **Korean input-output scenario calculator**: enter a change in final demand (e.g. exports of one
+   sector) and get direct, indirect and total output changes for 33 sectors, using the Bank of Korea
+   2020 benchmark table. Every load re-checks that the engine's Leontief inverse equals the published
+   production-inducement coefficients (max error about 1e-15).
+
+**What it is not.** Not a forecaster. A pre-registered hindcast found that the 2019 structure did not
+explain 2020 sectoral output changes better than the direct effect alone, and without knowing final
+demand an input-output model does not beat "no change" reliably. Supply bottlenecks, prices and
+behaviour are outside the model.
+
+**Install and run**
+
+```bash
+pip install "cxsim[app] @ git+https://github.com/11pyo/network-science-simulation"
+python scripts/fetch_bok_io.py --years 2020 --levels large      # download the Bank of Korea table
+python examples/tariff_export_scenario.py --sector C12 --percent -10
+streamlit run app.py                                             # the web screens (from a clone)
+```
+
+`scripts/fetch_bok_io.py` uses the file service behind the ECOS website, not the official Open API;
+it may change without notice. Data files are not redistributed in this repository.
+
+**License.** Apache-2.0 (see `LICENSE` and `NOTICE`). Please keep the `NOTICE` attribution when you
+reuse or redistribute the code, and cite with `CITATION.cff`.
+
+---
+
 영향이 퍼지는 구조를 계산하는 도구입니다. 화면은 두 개입니다.
 
 1. **네트워크 스트레스 테스트** — 방향과 부호가 있는 영향 그래프에 충격을 주고, 가중치의 불확실한 범위까지 반영해 영향 범위를 계산합니다.

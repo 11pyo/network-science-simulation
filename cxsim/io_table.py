@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 Bank of Korea input-output tables (ECOS xlsx) -> engine matrices (P1-industry).
 
