@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 Industry shock scenario page (산업연관 시나리오 계산기).
 

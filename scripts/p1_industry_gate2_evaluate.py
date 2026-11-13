@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 P1-industry gate 2, phase 2: evaluate the FROZEN predictions against outcome data.
 

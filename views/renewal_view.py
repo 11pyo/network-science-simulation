@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 Renewal P0 view: stable engines, range-based uncertainty, sensitivity.
 

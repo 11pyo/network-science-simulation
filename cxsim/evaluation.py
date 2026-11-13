@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 P1-SAP gate: does the propagation model rank affected objects better than
 plain baselines? (design v2.1 section 4, P1-SAP)

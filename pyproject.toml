@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cxsim"
+version = "0.2.0"
+description = "Stable signed propagation engine and a Korean input-output scenario calculator (Bank of Korea tables)"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "11pyo" }]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pydantic>=2.5",
+    "pyyaml>=6.0",
+    "SALib>=1.5",
+]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.50", "plotly>=5.18", "pandas>=2.1", "networkx>=3.2", "openpyxl>=3.1"]
+
+[project.urls]
+Repository = "https://github.com/11pyo/network-science-simulation"
+
+[tool.setuptools]
+packages = ["cxsim", "cxsim.engines"]

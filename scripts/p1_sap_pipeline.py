@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 11pyo
 """
 P1-SAP pipeline: verify extract -> impact graph -> SCC report -> gate evaluation.
 
