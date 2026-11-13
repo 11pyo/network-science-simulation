@@ -1,5 +1,19 @@
-streamlit>=1.30.0
+streamlit>=1.50
 networkx>=3.2
 plotly>=5.18.0
 numpy>=1.26.0
 pandas>=2.1.0
+scipy>=1.11
+pydantic>=2.5
+pyyaml>=6.0
+SALib>=1.5
+openpyxl>=3.1
+
+# --------------------------------------------------
+# Security Checklist
+# Applied:
+#   - Lower bounds pinned to versions with the APIs this code uses
+# Not Applied:
+#   - [WARN] Code download integrity: no upper bounds or --require-hashes; generate a hashed lock
+#     file (pip-compile --generate-hashes) before any shared or production deployment
+# --------------------------------------------------

@@ -17,6 +17,8 @@ from views.sidebar import render_sidebar
 from views.network_view import render_network_view
 from views.political_view import render_political_view
 from views.market_view import render_market_view
+from views.renewal_view import render_renewal_view
+from views.industry_view import render_industry_view
 
 # [SECURE] Server-side logging only - no stack traces to users (Category 4)
 logging.basicConfig(
@@ -28,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     st.set_page_config(
-        page_title="SAP System Impact Simulation",
+        page_title="Network Stress Test",
         page_icon="",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -37,6 +39,25 @@ def main():
     # Initialize session state
     if "simulation_results" not in st.session_state:
         st.session_state.simulation_results = None
+
+    # The legacy engine saturates every node at +-1 (see docs/RENEWAL_DESIGN.md).
+    # It stays reachable only as defect reproduction, off by default.
+    legacy_mode = st.sidebar.toggle("레거시 화면 (결함 재현용)", value=False, key="legacy_mode")
+    if not legacy_mode:
+        # [SECURE] Page choice limited to a fixed whitelist (Category 1)
+        page = st.sidebar.radio("화면", ["네트워크 스트레스 테스트", "산업연관 시나리오 계산기"], key="page")
+        try:
+            if page == "산업연관 시나리오 계산기":
+                render_industry_view()
+                return
+            render_renewal_view()
+        except Exception as e:
+            # [SECURE] Log details server-side, show generic message (Category 4)
+            logger.error("Renewal view error: %s", e, exc_info=True)
+            st.error("An error occurred while running the application. Please reload the page.")
+        return
+
+    st.warning("레거시 화면입니다. 기존 엔진은 충격 크기와 무관하게 결과가 ±1로 포화되는 결함이 있어 판단에 쓰면 안 됩니다.")
 
     try:
         # Render sidebar and get user configuration
